@@ -4,11 +4,19 @@ import {prefetchWorkflows} from "@/feature/workflows/server/prefatch";
 import { HydrateClient } from "@/trpc/server";
 import { Suspense } from "react";
 import {ErrorBoundary} from 'react-error-boundary';
-const page = async() => {
-  
+import { SearchParams } from "nuqs/server";
+import { workflowsParamsLoader } from "@/feature/workflows/server/params-loader";
 
+type Props={
+  searchParams: Promise<SearchParams>;
+} 
+
+const page = async({searchParams}:Props) => {
+  
+  
     await requireAuth();
-    await prefetchWorkflows();
+    const params=await workflowsParamsLoader(searchParams);
+    prefetchWorkflows(params );
   return (
     <WorkflowsContainer>
     <HydrateClient>
