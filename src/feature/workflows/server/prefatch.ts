@@ -8,3 +8,9 @@ export const prefetchWorkflows =  (params: Input) => {
         trpc.workflows.getMany.queryOptions(params)
     );
 }
+
+export const prefetchWorkflow= (id:string) => {
+    return prefetch(
+        trpc.workflows.getOne.queryOptions({id})
+    );
+}
