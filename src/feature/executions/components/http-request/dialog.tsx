@@ -35,7 +35,7 @@ import {
 import { en } from "zod/v4/locales";
 import { Button } from "@/components/ui/button";
 
-export type formType=z.infer<typeof formSchema>;
+export type HttpRequestFormValues=z.infer<typeof formSchema>;
 const formSchema=z.object({
     endpoint:z.url({message:"Invalid URL"}),
     method:z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
@@ -47,37 +47,33 @@ interface Props{
     open:boolean;
     onOpenChange:(open:boolean)=>void;
     onSubmit:(value:z.infer<typeof formSchema>)=>  void;
-    defaultEndpoint?:string;
-    defaultMethod?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-    defaultBody?:string;
+   defaultValues?: Partial<HttpRequestFormValues>; 
 }
 
 export const HttpRequestDialog=({
     open,
     onOpenChange,
     onSubmit,
-    defaultEndpoint="",
-    defaultMethod="GET",
-    defaultBody=""
+    defaultValues={}
 }:Props)=>{
     const form=useForm<z.infer<typeof formSchema>>({
         resolver:zodResolver(formSchema),
         defaultValues:{
-            endpoint:defaultEndpoint,
-            method:defaultMethod,
-            body:defaultBody
+            endpoint:defaultValues.endpoint||"",
+            method:defaultValues.method|| 'GET',
+            body:defaultValues.body||""
         },
     
     });
     useEffect(()=>{
         if(open){
             form.reset({
-                endpoint:defaultEndpoint,
-                method:defaultMethod,
-                body:defaultBody
+                 endpoint:defaultValues.endpoint||"",
+            method:defaultValues.method|| 'GET',
+            body:defaultValues.body||""
             });
         }
-    },[open,defaultEndpoint,defaultMethod,defaultBody,form]);
+    },[open,defaultValues,form]);
     const watchMathod=form.watch('method');
     const showBodyInput=['POST', 'PUT', 'PATCH'].includes(watchMathod);
     
