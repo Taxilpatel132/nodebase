@@ -1,10 +1,18 @@
 import type { NodeExecutor } from "@/feature/executions/types";
 import { NonRetriableError } from "inngest";
 import ky,{type Options as KyOptions} from "ky";
+import Handlebars from "handlebars";
+
+Handlebars.registerHelper('json', function(context) {
+   const jsonString = JSON.stringify(context, null, 2);
+   const safeString = new Handlebars.SafeString(jsonString);
+   return safeString;
+});
+
 type HttpRequestData={
-   variableName?:string;
-   endpoint?:string;
-   method?:'GET' | 'POST' | 'PUT'|'PATCH' | 'DELETE';
+   variableName:string;
+   endpoint:string;
+   method:'GET' | 'POST' | 'PUT'|'PATCH' | 'DELETE';
    body?:string;
 };
 
@@ -15,14 +23,19 @@ export const httpRequestExecuter:NodeExecutor<HttpRequestData>=async({data,conte
    if(!data.variableName){
       throw new NonRetriableError("No variable name provided for HTTP Request node");
    }
+   if(!data.method){
+      throw new NonRetriableError("No method provided for HTTP Request node");
+   }
 
    //const result=await step.fetch(data.endpoint);
    const result= await step.run(`http-request`, async()=>{
-      const method=data.method || 'GET';
-      const endpoint=data.endpoint!
+      const method=data.method;
+      const endpoint= Handlebars.compile(data.endpoint)(context);
       const options:KyOptions={method}
       if(['POST','PUT','PATCH'].includes(method)){
-         options.body=data.body;
+         const bodyTemplate= Handlebars.compile(data.body||"{}")(context);
+         JSON.parse(bodyTemplate);
+         options.body=bodyTemplate;
          options.headers={
             'Content-Type':'application/json',
          };
@@ -40,15 +53,12 @@ export const httpRequestExecuter:NodeExecutor<HttpRequestData>=async({data,conte
       }
       }
      
-     if(data.variableName) return {
+    return {
         ...context,
         [data.variableName]:responsePayload
    }
 
-   return{
-      ...context,
-      ...responsePayload
-   }
+  
    });
    return result;
    
