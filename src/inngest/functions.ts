@@ -8,11 +8,21 @@ import { NonRetriableError } from "inngest";
 import { topologicalsort } from "./utils";
 import { NodeType } from "@/generated/prisma";
 import { getExecutor } from "@/feature/executions/lib/executor-registry";
+import { HttpRequestChannel } from "./channels/http-request";
+import { ManualTriggerChannel } from "./channels/manual-trigger";
 
 export const executeWorkflow = inngest.createFunction(
-  { id: "execute-workflow" },
-  { event: "workflow/execute.workflow" },
-  async ({ event, step }) => {
+  { 
+    id: "execute-workflow", 
+    retries: 0
+  },
+  { event: "workflow/execute.workflow",
+    channels:[
+      HttpRequestChannel(),
+      ManualTriggerChannel()
+    ]
+   },
+  async ({ event, step ,publish}) => {
    const { workflowId } = event.data;
    if(!workflowId){
     throw new NonRetriableError("No workflow ID provided");
@@ -37,6 +47,7 @@ export const executeWorkflow = inngest.createFunction(
         context,
         step,
         nodeId:node.id,
+        publish
       });
     }
     return {
