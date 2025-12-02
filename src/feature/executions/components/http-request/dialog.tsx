@@ -40,7 +40,7 @@ const formSchema=z.object({
     variableName:z.string()
     .min(1,{message:"Variable name is required"})
     .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/,{message:"Variable name must start with a letter or underscore and contain only letters, numbers, and underscores."}),
-    endpoint:z.url({message:"Invalid URL"}),
+    endpoint:z.string().min(1,{message:"Invalid URL"}),
     method:z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
     body:z.string().optional()
     // .refine()
@@ -83,6 +83,7 @@ export const HttpRequestDialog=({
     const showBodyInput=['POST', 'PUT', 'PATCH'].includes(watchMathod);
     const watchVariableName=form.watch('variableName')||"myApiCall";
     const handleFormSubmit=(data:z.infer<typeof formSchema>)=>{
+        console.log("Form submitted with data:", data);
         onSubmit(data);
         onOpenChange(false);
        

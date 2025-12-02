@@ -10,8 +10,7 @@ import{
 import { NodeType } from '@/generated/prisma';
 import { toast } from 'sonner';
 import { Separator } from '../ui/separator';
-import { set } from 'zod';
-import { se } from 'date-fns/locale';
+
 
 
 export type NodeTypeOptions = {
@@ -28,6 +27,12 @@ const triggerNodes:NodeTypeOptions[]=[
     label:"Manual Trigger",
     description:"A trigger that is activated manually.",
     icon:MousePointerIcon
+},
+{
+    type:NodeType.GOOGLE_FORM_TRIGGER,
+    label:"Google Form Trigger",
+    description:"A trigger that activates when a new Google Form response is submitted.",
+    icon:'/logos/googleform.svg'
 },
 ]
 const executionNodes:NodeTypeOptions[]=[
@@ -108,7 +113,7 @@ export const NodeSelector=({
                             
                             <div className="flex items-center gap-6 overflow-hidden w-full">
                                 {typeof Icon === 'string' ? (
-                                    <img src={Icon} alt={nodeType.label} className="size-s object-contain rounded-md"/>
+                                    <img src={Icon} alt={nodeType.label} className="size-5 object-contain rounded-md " />
                                 ) : (<Icon className="size-5"/>)}
 
                                 <div className="flex itens-enter text-left flex-col">
