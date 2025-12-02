@@ -7,7 +7,8 @@ import { PAGINATION } from '@/config/constants';
 import {  NodeType } from '@/generated/prisma';
 
 import { inngest } from '@/inngest/client';
-import { init } from '@sentry/nextjs';
+
+import { sendWorkflowExecution } from '@/inngest/utils';
 
 export const workflowsRouter = createTRPCRouter({
     execute: protectedProcedure.input(z.object({id:z.string()})).mutation(async({input,ctx})=>{
@@ -15,14 +16,11 @@ export const workflowsRouter = createTRPCRouter({
             where:{id:input.id,userId:ctx.auth.user.id},
         });
 
-        await inngest.send({
-            name: "workflow/execute.workflow",
-            data: {
-                workflowId: input.id,
-               
-            },
-        });
+       
 
+        await sendWorkflowExecution({
+            workflowId:input.id
+        })
         return workflow;
     }),
     create: premiumProcedure.mutation(async ({ctx})=>{
