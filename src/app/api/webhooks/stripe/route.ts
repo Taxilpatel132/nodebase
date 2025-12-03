@@ -1,5 +1,6 @@
 import { sendWorkflowExecution } from "@/inngest/utils";
 import { google } from "@ai-sdk/google";
+import { time } from "console";
 import {type  NextRequest,NextResponse } from "next/server";
 
 
@@ -17,27 +18,24 @@ export async function POST(request:NextRequest){
             }
 
             const body=await request.json();
-            const formData={
-                formId:body.formId,
-                formTitle:body.formTitle,
-                responseId:body.responseId,
-                timestamp:body.timestamp,
-                respondentEmail:body.respondentEmail,
-                responses:body.responses,
-                raw:body
+            const stripeData={
+               eventId:body.id,
+               eventType:body.type,
+               timestamp:body.created,
+               livemode:body.livemode,
+               raw:body.data?.object
             }
 
             await sendWorkflowExecution({
                 workflowId:workfolwId,
                 initialData:{
-                    googleform: formData
+                    stripe: stripeData
                 }
             });
 
-             return NextResponse.json({success:true
-        }, {status:200});
+       u
     }catch(error){
-        console.error("Error in Google Form workflow route:",error);
+        console.error("Error in Stripe workflow route:",error);
         return NextResponse.json({
             success:false,
             error:"Internal Server Error"}, {status:500});
