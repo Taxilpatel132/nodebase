@@ -11,9 +11,9 @@ Handlebars.registerHelper('json', function(context) {
 });
 
 type HttpRequestData={
-   variableName:string;
-   endpoint:string;
-   method:'GET' | 'POST' | 'PUT'|'PATCH' | 'DELETE';
+   variableName?:string;
+   endpoint?:string;
+   method?:'GET' | 'POST' | 'PUT'|'PATCH' | 'DELETE';
    body?:string;
 };
 
@@ -55,6 +55,33 @@ export const httpRequestExecuter:NodeExecutor<HttpRequestData>=async({data,conte
    try{
    //const result=await step.fetch(data.endpoint);
    const result= await step.run(`http-request`, async()=>{
+      if(!data.endpoint){
+      await publish(
+      HttpRequestChannel().status({
+         nodeId,
+         status:'error'
+      }),
+    )
+      throw new NonRetriableError("No endpoint provided for HTTP Request node");
+   }
+   if(!data.variableName){
+      await publish(
+      HttpRequestChannel().status({
+         nodeId,
+         status:'error'
+      }),
+    )
+      throw new NonRetriableError("No variable name provided for HTTP Request node");
+   }
+   if(!data.method){
+      await publish(
+      HttpRequestChannel().status({
+         nodeId,
+         status:'error'
+      }),
+    )
+      throw new NonRetriableError("No method provided for HTTP Request node");
+   }
       const method=data.method;
       const endpoint= Handlebars.compile(data.endpoint)(context);
       const options:KyOptions={method}

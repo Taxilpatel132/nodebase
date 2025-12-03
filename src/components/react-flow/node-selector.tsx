@@ -34,6 +34,12 @@ const triggerNodes:NodeTypeOptions[]=[
     description:"A trigger that activates when a new Google Form response is submitted.",
     icon:'/logos/googleform.svg'
 },
+{
+    type:NodeType.STRIPE_TRIGGER,
+    label:"Stripe Trigger",
+    description:"A trigger that activates when a new Stripe event occurs.",
+    icon:'/logos/stripe.svg'
+},
 ]
 const executionNodes:NodeTypeOptions[]=[
     {
