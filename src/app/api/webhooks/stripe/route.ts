@@ -1,6 +1,6 @@
 import { sendWorkflowExecution } from "@/inngest/utils";
 import { google } from "@ai-sdk/google";
-import { time } from "console";
+
 import {type  NextRequest,NextResponse } from "next/server";
 
 
@@ -33,7 +33,7 @@ export async function POST(request:NextRequest){
                 }
             });
 
-       u
+       
     }catch(error){
         console.error("Error in Stripe workflow route:",error);
         return NextResponse.json({
