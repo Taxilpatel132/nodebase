@@ -47,6 +47,23 @@ const executionNodes:NodeTypeOptions[]=[
         label:"HTTP Request",
         description:"Make an HTTP request to an external API.",
         icon:GlobeIcon
+    },
+    {
+        type:NodeType.GEMINI,
+        label:"Gemini",
+        description:"Make a request to the Gemini API.",
+        icon:'/logos/gemini.svg' 
+    },
+     {
+        type:NodeType.OPENAI,
+        label:"OpenAI",
+        description:"Make a request to the OpenAI API.",
+        icon:'/logos/openai.svg' 
+    }, {
+        type:NodeType.ANTHOROPIC,
+        label:"Anthropic",
+        description:"Make a request to the Anthropic API.",
+        icon:'/logos/anthropic.svg' 
     }
 ];
 
@@ -146,7 +163,7 @@ export const NodeSelector=({
                             
                             <div className="flex items-center gap-6 overflow-hidden w-full">
                                 {typeof Icon === 'string' ? (
-                                    <img src={Icon} alt={nodeType.label} className="size-s object-contain rounded-md"/>
+                                    <img src={Icon} alt={nodeType.label} className="size-5 object-contain rounded-md"/>
                                 ) : (<Icon className="size-5"/>)}
 
                                 <div className="flex itens-enter text-left flex-col">
