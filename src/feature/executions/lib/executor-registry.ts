@@ -8,6 +8,8 @@ import { stripeTriggerExecutor } from "@/feature/triggers/components/stripe-trig
 import { geminiExecutor } from "../components/gemini/executor";
 import { openAiExecutor } from "../components/openAi/executor";
 import { anthropicExecutor } from "../components/anthropic/executor";
+import {  discordExecutor } from "../components/discord/executor";
+import { slackExecutor } from "../components/slack/executor";
 export const executorRegistry:Record<NodeType,NodeExecutor>={
     [NodeType.MANUAL_TRIGGER]:manualTriggerExecuter,
     [NodeType.HTTP_REQUEST]:httpRequestExecuter,
@@ -17,6 +19,8 @@ export const executorRegistry:Record<NodeType,NodeExecutor>={
     [NodeType.GEMINI]:geminiExecutor,
     [NodeType.ANTHOROPIC]:anthropicExecutor, 
     [NodeType.OPENAI]:openAiExecutor, 
+    [NodeType.DISCORD]:discordExecutor,
+    [NodeType.SLACK]:slackExecutor , //placeholder until slack executor is implemented
 };
 
 export const getExecutor=(type:NodeType):NodeExecutor=>{

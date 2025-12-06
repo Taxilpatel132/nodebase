@@ -8,6 +8,8 @@ import type { NodeTypes } from "@xyflow/react";
 import { GeminiNode } from "@/feature/executions/components/gemini/node";
 import { OpenAiNode } from "@/feature/executions/components/openAi/node";
 import { AnthropicNode } from "@/feature/executions/components/anthropic/node";
+import { DiscordNode } from "@/feature/executions/components/discord/node";
+import { SlackNode } from "@/feature/executions/components/slack/node";
 
 export const nodeComponents={
     [NodeType.INITIAL]:InitialNode,
@@ -16,8 +18,10 @@ export const nodeComponents={
     [NodeType.GOOGLE_FORM_TRIGGER]:GoogleFormTriggerNode,
     [NodeType.STRIPE_TRIGGER]:StripeTriggerNode,
     [NodeType.GEMINI]:GeminiNode,
-    [NodeType.OPENAI]:OpenAiNode, //placeholder
-    [NodeType.ANTHOROPIC]:AnthropicNode, //placeholder
+    [NodeType.OPENAI]:OpenAiNode,   
+    [NodeType.ANTHOROPIC]:AnthropicNode, 
+    [NodeType.DISCORD]:DiscordNode, 
+    [NodeType.SLACK]:SlackNode,
 }as const satisfies NodeTypes;
 
 

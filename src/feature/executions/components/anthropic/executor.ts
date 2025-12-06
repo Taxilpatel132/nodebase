@@ -20,7 +20,7 @@ type AnthropicData={
    userPrompt?: string;
 };
 
-export const anthropicExecutor:NodeExecutor<AnthropicData>=async({data,context,step,nodeId,publish})=>{
+export const anthropicExecutor:NodeExecutor<AnthropicData>=async({data,context,step,nodeId,userID,publish})=>{
     await publish(
       AnthropicChannel().status({
          nodeId,
@@ -62,11 +62,18 @@ if(!data.userPrompt){
       return prisma.credential.findUnique({
          where:{
             id: data.credentialId,
+            userId: userID,
          },
       });
    });
 
    if(!credential){
+      await publish(
+      AnthropicChannel().status({
+         nodeId,
+         status:'error'
+      }),
+    );
       throw new NonRetriableError("Invalid credential ID provided for Anthropic node");
    }
   

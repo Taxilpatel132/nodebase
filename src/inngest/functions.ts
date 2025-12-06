@@ -1,9 +1,5 @@
 import prisma from "@/lib/db";
 import { inngest } from "./client";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { generateText } from "ai";
-const google = createGoogleGenerativeAI();
-import * as Sentry from "@sentry/nextjs";
 import { NonRetriableError } from "inngest";
 import { topologicalsort } from "./utils";
 import { NodeType } from "@/generated/prisma";
@@ -14,6 +10,8 @@ import { GoogleFormTriggerChannel } from "./channels/google-form-trigger";
 import { StripeTriggerChannel } from "./channels/stripe-trigger";
 import { GeminiChannel } from "./channels/gemini";
 import { OpenAiChannel } from "./channels/openai";
+import { DiscordChannel } from "./channels/discord";
+import { SlackChannel } from "./channels/slack";
 
 export const executeWorkflow = inngest.createFunction(
   { 
@@ -27,7 +25,9 @@ export const executeWorkflow = inngest.createFunction(
       GoogleFormTriggerChannel(),
       StripeTriggerChannel(),
       GeminiChannel(),
-      OpenAiChannel()
+      OpenAiChannel(),
+      DiscordChannel(),
+      SlackChannel()
     ]
    },
   async ({ event, step ,publish}) => {
@@ -45,7 +45,13 @@ export const executeWorkflow = inngest.createFunction(
       return topologicalsort(workflow.nodes, workflow.connections);
     });
 
-
+    const userID=await step.run('get-user-id', async()=>{
+      const workflow=await prisma.workflow.findUniqueOrThrow({
+        where:{id:workflowId},
+        select:{userId:true}
+      });
+      return workflow.userId;
+    });
     //initialize context
     let context = event.data.initialData || {};
     for(const node of sortedNodes){
@@ -54,6 +60,7 @@ export const executeWorkflow = inngest.createFunction(
         data:node.data as Record<string,unknown>,
         context,
         step,
+        userID,
         nodeId:node.id,
         publish
       });
