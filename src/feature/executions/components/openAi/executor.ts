@@ -19,7 +19,7 @@ type OpenAiData={
    userPrompt?: string;
 };
 
-export const openAiExecutor:NodeExecutor<OpenAiData>=async({data,context,step,nodeId,publish})=>{
+export const openAiExecutor:NodeExecutor<OpenAiData>=async({data,context,step,nodeId,userID,publish})=>{
     await publish(
       OpenAiChannel().status({
          nodeId,
@@ -59,11 +59,18 @@ if(!data.userPrompt){
       return prisma.credential.findUnique({
          where:{
             id: data.credentialId,
+            userId: userID,
          },
       });
    });
 
    if(!credential){
+      await publish(
+      OpenAiChannel().status({
+         nodeId,
+         status:'error'
+      }),
+      );
       throw new NonRetriableError("Invalid credential ID provided for OpenAI node");
    }
    

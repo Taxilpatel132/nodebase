@@ -7,6 +7,7 @@ export type StepTools =GetStepTools<Inngest.Any>;
 export interface NodeExecutorParams<TData=Record<string,unknown>>{
     data:TData;
     context:workflowContext;
+    userID:string;
     step:StepTools;
     nodeId:string;
     publish:Realtime.PublishFn;

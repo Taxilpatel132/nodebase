@@ -64,6 +64,19 @@ const executionNodes:NodeTypeOptions[]=[
         label:"Anthropic",
         description:"Make a request to the Anthropic API.",
         icon:'/logos/anthropic.svg' 
+    },
+     {
+        type:NodeType.DISCORD,
+        label:"Discord",
+        description:"Make a request to the Discord API.",
+        icon:'/logos/discord.svg' 
+    }
+    ,
+     {
+        type:NodeType.SLACK,
+        label:"Slack",
+        description:"Make a request to the Slack API.",
+        icon:'/logos/slack.svg' 
     }
 ];
 

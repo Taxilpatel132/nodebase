@@ -19,7 +19,7 @@ type GeminiData={
    userPrompt?: string;
 };
 
-export const geminiExecutor:NodeExecutor<GeminiData>=async({data,context,step,nodeId,publish})=>{
+export const geminiExecutor:NodeExecutor<GeminiData>=async({data,context,step,nodeId,publish,userID})=>{
     await publish(
       GeminiChannel().status({
          nodeId,
@@ -63,11 +63,19 @@ if(!data.userPrompt){
       return prisma.credential.findUnique({
          where:{
             id: data.credentialId,
+            userId: userID,
+
          },
       });
    });
 
    if(!credential){
+      await publish(
+      GeminiChannel().status({
+         nodeId,
+         status:'error'
+      }),
+    );
       throw new NonRetriableError("Invalid credential ID provided for Gemini node");
    }
    
