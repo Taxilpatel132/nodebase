@@ -5,6 +5,8 @@ import Handlebars from "handlebars";
 import { AnthropicChannel } from "@/inngest/channels/anthropic";
 import { generateText } from "ai";
 
+import prisma from "@/lib/db";
+
 Handlebars.registerHelper('json', function(context) {
    const jsonString = JSON.stringify(context, null, 2);
    const safeString = new Handlebars.SafeString(jsonString);
@@ -13,6 +15,7 @@ Handlebars.registerHelper('json', function(context) {
 
 type AnthropicData={
    variableName?:string;
+   credentialId?:string; 
    systemPrompt?: string;
    userPrompt?: string;
 };
@@ -33,6 +36,16 @@ if(!data.variableName){
     );
     throw new NonRetriableError("No variable name provided for Anthropic node");
 }
+
+if(!data.credentialId){
+   await publish(
+      AnthropicChannel().status({
+         nodeId,
+         status:'error'
+      }),
+    );
+      throw new NonRetriableError("No credentialId provided for Anthropic node");
+}
 if(!data.userPrompt){
    await publish(
       AnthropicChannel().status({
@@ -45,9 +58,20 @@ if(!data.userPrompt){
 
   const systemPrompt= data.systemPrompt ? Handlebars.compile(data.systemPrompt)(context) : 'You are A helpful assistant.';
    const userPrompt= Handlebars.compile(data.userPrompt)(context);
-   const CredentialValue=process.env.ANTHROPIC_API_KEY!;
+   const credential=await step.run('get-credential', async()=>{
+      return prisma.credential.findUnique({
+         where:{
+            id: data.credentialId,
+         },
+      });
+   });
+
+   if(!credential){
+      throw new NonRetriableError("Invalid credential ID provided for Anthropic node");
+   }
+  
    const anthropic= createAnthropic({
-      apiKey:CredentialValue,
+      apiKey:credential.value,
    })
    try{
      const {steps}=await step.ai.wrap(
