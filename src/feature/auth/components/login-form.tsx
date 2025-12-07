@@ -31,6 +31,8 @@ import { Input } from '@/components/ui/input';
 
 
 import { authClient } from '@/lib/auth-client';
+import { auth } from '@/lib/auth';
+import { on } from 'events';
 
 const loginformSchema = z.object({
     email: z.email('Invalid email address'),
@@ -48,6 +50,30 @@ export const LoginForm = () => {
             password: '',
         },
     });
+    const singInGithub=async()=>{
+        await authClient.signIn.social({
+            provider:'github',
+        },{onSuccess:()=>{
+            router.push('/');
+        },
+        onError:()=>{
+            toast.error('Github sign in failed');
+        }
+    });
+    }
+
+
+     const singInGoogle=async()=>{
+        await authClient.signIn.social({
+            provider:'google',
+        },{onSuccess:()=>{
+            router.push('/');
+        },
+        onError:()=>{
+            toast.error('Google sign in failed');
+        }
+    });
+    }
     const onSubmit = async (values: LoginFormValues) => {
      await authClient.signIn.email({
         email:values.email,
@@ -82,11 +108,11 @@ export const LoginForm = () => {
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <div className='grid gap-6'>
                                 <div className='flex flex-col gap-4'>
-                                    <Button variant='outline' className="w-full" type='button' disabled={ispanding}>
+                                    <Button onClick={singInGithub} variant='outline' className="w-full" type='button' disabled={ispanding}>
                                         <Image src='/logos/github.svg' alt='github logo' width={20} height={20} className='inline mr-2' />
                                         continue with github
                                     </Button>
-                                    <Button variant='outline' className="w-full" type='button' disabled={ispanding}>
+                                    <Button onClick={singInGoogle} variant='outline' className="w-full" type='button' disabled={ispanding}>
                                         <Image src='/logos/google.svg' alt='google logo' width={20} height={20} className='inline mr-2' />
                                         continue with google
                                     </Button>
