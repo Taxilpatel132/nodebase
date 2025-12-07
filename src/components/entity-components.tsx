@@ -22,11 +22,11 @@ import{
 }from "@/components/ui/card"
 
 import { DropdownMenu,DropdownMenuContent ,DropdownMenuItem,DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { is } from "date-fns/locale";
+
 type EntityHeaderProps = {
     title: string;
     description?: string;
-    newButtonLabel: string;
+    newButtonLabel?: string;
     disabled?: boolean;
     isCreating?: boolean;
 }&(
@@ -71,7 +71,7 @@ export const EntityHeader=({
 type EntityContainerProps={
     children:React.ReactNode;   
     header: React.ReactNode;
-    search: React.ReactNode;
+    search?: React.ReactNode;
     pagination: React.ReactNode;
 }
 
