@@ -5,6 +5,7 @@ import Handlebars from "handlebars";
 import { GeminiChannel } from "@/inngest/channels/gemini";
 import { generateText } from "ai";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryptions";
 
 Handlebars.registerHelper('json', function(context) {
    const jsonString = JSON.stringify(context, null, 2);
@@ -80,7 +81,7 @@ if(!data.userPrompt){
    }
    
    const google= createGoogleGenerativeAI({
-      apiKey:credential.value,
+      apiKey:decrypt(credential.value),
    })
    try{
      const {steps}=await step.ai.wrap(

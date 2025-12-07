@@ -6,6 +6,8 @@ import z from 'zod';
 import { PAGINATION } from '@/config/constants';
 import {  CredentialType, } from '@/generated/prisma';
 
+import { encrypt } from '@/lib/encryptions';
+
 export const CredentialRouter = createTRPCRouter({
  
     create: premiumProcedure.input(z.object({
@@ -21,7 +23,7 @@ export const CredentialRouter = createTRPCRouter({
                 name:generateSlug(3),
                 userId:ctx.auth.user.id,
                 type,
-                value,  //todo: encrypt value for production for such sensitive data
+                value:encrypt(value), //todo: encrypt value for production for such sensitive data
             },
         });
     }
@@ -52,7 +54,7 @@ export const CredentialRouter = createTRPCRouter({
             data:{
                 name,
                 type,
-                value, //todo: encrypt value for production for such sensitive data
+                value:encrypt(value),
             },
         });
     }),

@@ -5,6 +5,7 @@ import Handlebars from "handlebars";
 import { OpenAiChannel } from "@/inngest/channels/openai";
 import { generateText } from "ai";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryptions";
 
 Handlebars.registerHelper('json', function(context) {
    const jsonString = JSON.stringify(context, null, 2);
@@ -75,7 +76,7 @@ if(!data.userPrompt){
    }
    
    const openai= createOpenAI({
-      apiKey:credential.value,
+      apiKey:decrypt(credential.value),
    })
    try{
      const {steps}=await step.ai.wrap(
